@@ -45,21 +45,6 @@ alter table roles owner to postgres;
 create unique index if not exists role_role_name_uindex
     on roles (role_name);
 
-create table if not exists orders
-(
-    id bigserial
-        constraint orders_pk
-            primary key,
-    received_date timestamp not null,
-    return_date timestamp not null,
-    order_status varchar(20) default 'NOT_CONFIRMED'::character varying not null,
-    user_id bigint not null
-        constraint orders_users_id_fk
-            references users
-);
-
-alter table orders owner to postgres;
-
 create table if not exists user_roles
 (
     id bigserial
@@ -94,16 +79,36 @@ create table if not exists cars
             primary key,
     name_car varchar(30) not null,
     model varchar(30) not null,
-    birthday_car timestamp not null,
+    release_date timestamp not null,
     color varchar(20) not null,
     v_motor double precision not null,
     power double precision not null,
     transmission varchar(30) not null,
     cost_per_day double precision not null,
-    car_status varchar(30) not null
+    car_status varchar(30) not null,
+    discount_id bigint
 );
 
 alter table cars owner to postgres;
+
+create table if not exists orders
+(
+    id bigserial
+        constraint orders_pk
+            primary key,
+    received_date timestamp not null,
+    return_date timestamp not null,
+    order_status varchar(20) default 'NOT_CONFIRMED'::character varying not null,
+    user_id bigint not null
+        constraint orders_users_id_fk
+            references users,
+    car_id bigint not null
+        constraint orders_cars_id_fk
+            references cars,
+    bill_id bigint not null
+);
+
+alter table orders owner to postgres;
 
 create unique index if not exists cars_id_uindex
     on cars (id);
@@ -139,6 +144,10 @@ create table if not exists bills
 
 alter table bills owner to postgres;
 
+alter table orders
+    add constraint orders_bills_id_fk
+        foreign key (bill_id) references bills;
+
 create index if not exists bills_bill_status_index
     on bills (bill_status);
 
@@ -150,4 +159,32 @@ create index if not exists bills_payment_date_index
 
 create index if not exists bills_total_price_index
     on bills (total_price);
+
+create table if not exists discount
+(
+    id bigserial
+        constraint discount_pk
+            primary key,
+    percentages integer not null,
+    start_date timestamp not null,
+    end_date timestamp not null,
+    car_id bigint not null
+        constraint discount_cars_id_fk
+            references cars
+);
+
+alter table discount owner to postgres;
+
+alter table cars
+    add constraint cars_discount_id_fk
+        foreign key (discount_id) references discount;
+
+create unique index if not exists discount_id_uindex
+    on discount (id);
+
+create index if not exists discount_start_date_end_date_index
+    on discount (start_date, end_date);
+
+create index if not exists discount_start_date_index
+    on discount (start_date);
 

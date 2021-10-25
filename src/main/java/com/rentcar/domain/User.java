@@ -23,7 +23,7 @@ import java.util.Set;
 @Entity
 @Table(name = "users")
 @EqualsAndHashCode(exclude = {
-        "orders", "roles", "photos"
+        "orders", "roles"
 })
 public class User {
 

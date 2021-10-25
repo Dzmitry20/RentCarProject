@@ -18,3 +18,8 @@ spring:
       url: ${spring.datasource.url}
       user: ${spring.datasource.username}
       password: ${spring.datasource.password}
+
+
+jwtconfig:
+  secret: secret
+  expiration: 60000

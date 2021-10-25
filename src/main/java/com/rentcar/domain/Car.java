@@ -1,19 +1,27 @@
 package com.rentcar.domain;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.rentcar.domain.status.CarStatus;
 import com.rentcar.domain.status.Transmission;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
+import java.util.HashSet;
+import java.util.Set;
 
 @Data
 @NoArgsConstructor
 @Entity
 @Table(name = "cars")
+@EqualsAndHashCode(exclude = {
+        "orders"
+})
 public class Car {
 
     @Id
@@ -38,7 +46,7 @@ public class Car {
     @Column
     private Double power;
 
-    @Column
+    @Column(name = "link_photo")
     private String linkPhoto;
 
     @Column
@@ -52,6 +60,14 @@ public class Car {
     @Enumerated(EnumType.STRING)
     private CarStatus carStatus = CarStatus.NOT_AVAILABLE;
 
+    @OneToMany(mappedBy = "car", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @JsonManagedReference
+    private Set<Order> orders = new HashSet<>();
+
+    @ManyToOne
+    @JoinColumn(name = "discount_id")
+    @JsonBackReference
+    private Discount discount;
 
     @Override
     public String toString() {

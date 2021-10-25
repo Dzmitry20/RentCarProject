@@ -1,5 +1,7 @@
 package com.rentcar.domain;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.rentcar.domain.status.OrderStatus;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -28,13 +30,23 @@ public class Order {
     private Date returnData;
 
     @Column(name ="order_status")
+    @Enumerated(EnumType.STRING)
     private OrderStatus orderStatus = OrderStatus.NOT_CONFIRMED;
 
     @ManyToOne
+    @JoinColumn(name = "user_id")
+    @JsonBackReference
     private User user;
 
-    @OneToMany()
-    private Set<Car> cars = new HashSet<>();
+    @ManyToOne
+    @JoinColumn(name = "car_id")
+    @JsonBackReference
+    private Car car;
+
+    @OneToOne
+    @JoinColumn(name = "bill_id")
+    @JsonBackReference
+    private Bill bill;
 
 
     @Override

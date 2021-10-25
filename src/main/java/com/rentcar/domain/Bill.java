@@ -1,7 +1,9 @@
 package com.rentcar.domain;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.rentcar.domain.status.BillStatus;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
@@ -13,6 +15,9 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @Entity
 @Table(name = "bills")
+@EqualsAndHashCode(exclude = {
+        "order"
+})
 public class Bill {
 
     @Id
@@ -29,8 +34,11 @@ public class Bill {
     private Double totalPrice;
 
     @Column(name = "bill_status")
+    @Enumerated(EnumType.STRING)
     private BillStatus billStatus = BillStatus.AWAITING_PAYMENT;
 
+    @OneToOne(mappedBy = "bill", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @JsonManagedReference
     private Order order;
 
     @Override
