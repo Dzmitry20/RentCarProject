@@ -8,6 +8,8 @@ import org.apache.commons.lang3.builder.ToStringStyle;
 
 import javax.persistence.*;
 import java.util.Date;
+import java.util.HashSet;
+import java.util.Set;
 
 @Data
 @NoArgsConstructor
@@ -22,13 +24,17 @@ public class Order {
     @Column(name = "received_date")
     private Date receivedDate;
 
+    @Column(name ="return_date")
     private Date returnData;
 
+    @Column(name ="order_status")
     private OrderStatus orderStatus = OrderStatus.NOT_CONFIRMED;
 
-    private User client;
+    @ManyToOne
+    private User user;
 
-    private Car car;
+    @OneToMany()
+    private Set<Car> cars = new HashSet<>();
 
 
     @Override

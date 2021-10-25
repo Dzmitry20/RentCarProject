@@ -1,24 +1,37 @@
 package com.rentcar.domain;
 
 import com.rentcar.domain.status.BillStatus;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 
+import javax.persistence.*;
 import java.time.LocalDateTime;
 
+@Data
+@NoArgsConstructor
+@Entity
+@Table(name = "bills")
 public class Bill {
 
-    private String id;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
 
-    private Long numberContract;
+    @Column(name = "number_bill")
+    private Long numberBill;
 
+    @Column(name = "payment_date")
     private LocalDateTime paymentDate;
 
+    @Column(name = "total_price")
     private Double totalPrice;
 
-    private Order order;
-
+    @Column(name = "bill_status")
     private BillStatus billStatus = BillStatus.AWAITING_PAYMENT;
+
+    private Order order;
 
     @Override
     public String toString() {

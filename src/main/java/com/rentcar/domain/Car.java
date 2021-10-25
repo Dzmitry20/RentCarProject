@@ -26,8 +26,8 @@ public class Car {
     @Column
     private String model;
 
-    @Column(name = "birthday_car")
-    private LocalDateTime birthdayCar;
+    @Column(name = "release_date")
+    private LocalDateTime releaseData;
 
     @Column
     private String color;
