@@ -22,4 +22,8 @@ spring:
 
 jwtconfig:
   secret: secret
-  expiration: 60000
+  expiration: 6000000
+
+
+server:
+  port: 8080

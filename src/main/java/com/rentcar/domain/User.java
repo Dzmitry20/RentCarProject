@@ -52,6 +52,9 @@ public class User {
     @Column(name = "driver_license_number" )
     private Integer driverLicenseNumber;
 
+    @Column(name = "is_deleted")
+    private Boolean isDeleted;
+
     @Column
     private String login;
 
