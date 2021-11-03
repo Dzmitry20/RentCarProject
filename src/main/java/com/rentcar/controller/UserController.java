@@ -32,7 +32,7 @@ public class UserController {
             @ApiResponse(code = 500, message = "There is no user with such id")
     })
     @PutMapping("/{userId}")
-    public UserRequest update(@PathVariable("userId") Long id, @Valid  @RequestBody UserRequest userRequest) {
+    public UserRequest update(@PathVariable("userId") Long id,  @RequestBody UserRequest userRequest) {
         return userService.updateUser(id, userRequest);
     }
 

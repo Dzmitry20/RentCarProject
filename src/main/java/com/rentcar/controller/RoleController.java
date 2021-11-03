@@ -100,8 +100,6 @@ public class RoleController {
     }
 
 
-
-
     @ApiOperation(value = "give the user a new role")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "roleId", dataType = "string", paramType = "query",

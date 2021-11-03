@@ -16,12 +16,12 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 public class UserRequest {
 
-    @NotBlank(message = "Enter name")
-    @Size(min = 2, max = 20, message = "Name should be between 2 and 20 characters")
+//    @NotBlank(message = "Enter name")
+//    @Size(min = 2, max = 20, message = "Name should be between 2 and 20 characters")
     private String name;
 
-    @NotBlank(message = "Enter name")
-    @Size(min = 2, max = 20, message = "Name should be between 2 and 20 characters")
+//    @NotBlank(message = "Enter name")
+//    @Size(min = 2, max = 20, message = "Name should be between 2 and 20 characters")
     private String surname;
 
     private Gender gender;

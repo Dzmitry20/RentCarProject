@@ -23,8 +23,6 @@ public interface CarRepository extends JpaRepository<Car, Long> {
 
         List<Car> findByCarStatus(CarStatus status);
 
-        List<Car> findByNameCar(String name);
-
         @Modifying
         @Query(value = "select c from Car c left join c.orders o where o.receivedDate= ?1 AND o.returnDate= ?2")
         List<Car> findByFreeDate(@Param("startDate") Timestamp startDate, @Param("endDate")Timestamp endDate);

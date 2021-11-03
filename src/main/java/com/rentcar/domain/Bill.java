@@ -1,5 +1,6 @@
 package com.rentcar.domain;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.rentcar.domain.status.BillStatus;
 import lombok.Data;
@@ -37,8 +38,9 @@ public class Bill {
     @Enumerated(EnumType.STRING)
     private BillStatus billStatus = BillStatus.AWAITING_PAYMENT;
 
-    @OneToOne(mappedBy = "bill", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
-    @JsonManagedReference
+    @OneToOne
+    @JoinColumn(name = "order_id")
+    @JsonBackReference
     private Order order;
 
     @Override

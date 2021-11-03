@@ -8,6 +8,7 @@ import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 
 import javax.persistence.*;
+import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.Set;
@@ -30,10 +31,10 @@ public class Discount {
     private Integer percentages;
 
     @Column(name = "start_date")
-    private LocalDateTime startDate;
+    private Timestamp startDate;
 
     @Column(name = "end_date")
-    private LocalDateTime endDate;
+    private Timestamp endDate;
 
     @OneToMany(mappedBy = "discount", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     @JsonManagedReference

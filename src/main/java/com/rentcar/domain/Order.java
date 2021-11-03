@@ -5,6 +5,7 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.rentcar.domain.status.OrderStatus;
 import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
@@ -17,6 +18,7 @@ import java.util.Set;
 
 @Data
 @NoArgsConstructor
+@Getter
 @Entity
 @Table(name="orders")
 public class Order {
@@ -47,9 +49,8 @@ public class Order {
     @JsonBackReference
     private Car car;
 
-    @OneToOne
-    @JoinColumn(name = "bill_id")
-    @JsonBackReference
+    @OneToOne(mappedBy = "order", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @JsonManagedReference
     private Bill bill;
 
 
@@ -57,4 +58,5 @@ public class Order {
     public String toString() {
         return ToStringBuilder.reflectionToString(this, ToStringStyle.JSON_STYLE);
     }
+
 }
