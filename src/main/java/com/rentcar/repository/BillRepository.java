@@ -1,7 +1,6 @@
 package com.rentcar.repository;
 
 import com.rentcar.domain.Bill;
-import com.rentcar.domain.Car;
 import com.rentcar.domain.Order;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
@@ -16,7 +15,6 @@ public interface BillRepository extends JpaRepository<Bill, Long> {
     @Modifying
     @Query(value = "delete from Bill b where b.order = :order")
     void delete(@Param("order") Order order);
-
 
     @Modifying
     @Query(value = "delete from Bill b where b.id = :billID")

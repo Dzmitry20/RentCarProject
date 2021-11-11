@@ -10,6 +10,7 @@ import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 
 import javax.persistence.*;
+import java.sql.Timestamp;
 import java.time.LocalDateTime;
 
 @Data
@@ -28,8 +29,8 @@ public class Bill {
     @Column(name = "number_bill")
     private Long numberBill;
 
-    @Column(name = "payment_date")
-    private LocalDateTime paymentDate;
+    @Column(name = "create_date")
+    private Timestamp createDate;
 
     @Column(name = "total_price")
     private Double totalPrice;

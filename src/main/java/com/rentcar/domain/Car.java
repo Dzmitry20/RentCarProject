@@ -11,6 +11,7 @@ import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 
 import javax.persistence.*;
+import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.Set;
@@ -35,7 +36,7 @@ public class Car {
     private String model;
 
     @Column(name = "release_date")
-    private LocalDateTime releaseData;
+    private Timestamp releaseData;
 
     @Column
     private String color;

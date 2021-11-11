@@ -4,23 +4,21 @@ import com.rentcar.controller.requests.UserCreateRequest;
 import com.rentcar.controller.requests.UserRequest;
 import com.rentcar.controller.requests.mappers.UserCreateMapper;
 import com.rentcar.controller.requests.mappers.UserMapper;
-import com.rentcar.domain.Role;
 import com.rentcar.domain.User;
 import com.rentcar.exception.NoSuchEntityException;
 import com.rentcar.exception.UserNotFoundException;
-import com.rentcar.repository.RoleRepository;
 import com.rentcar.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDateTime;
+import javax.persistence.EntityExistsException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
-import java.util.Set;
+import java.util.UUID;
 
 
 @Service
@@ -29,19 +27,18 @@ public class UserService {
 
     private final UserRepository userRepository;
 
-    private final RoleRepository roleRepository;
-
     private final RoleService roleService;
 
     private final UserMapper userMapper;
 
     private final UserCreateMapper userCreateMapper;
 
+    public final MailSender mailSender;
+
 
     public Page<User> findAllUsers() {
         return userRepository.findAll(PageRequest.of(1, 10, Sort.by(Sort.Direction.DESC, "id")));
     }
-
 
     public UserRequest updateUser(Long id, UserRequest userRequest) {
         User user = userRepository.findById(id)
@@ -115,7 +112,7 @@ public class UserService {
                 .orElseThrow(() -> new NoSuchEntityException("User not found by id " + id));
         UserRequest request = new UserRequest();
         userMapper.updateUserRequestFromUser(notDeletedUsers,request);
-        return request ;
+        return request;
     }
 
 
@@ -127,8 +124,30 @@ public class UserService {
     public UserRequest createUser(UserCreateRequest userCreateRequest) {
         User user = new User();
         userCreateMapper.updateUserFromUserCreateRequest(userCreateRequest, user);
+
+        User userFromDb = userRepository.findByLogin(user.getLogin());
+
+        if (userFromDb != null) {
+            throw new EntityExistsException("Entity exists!");
+        }
+
         user.setIsDeleted(false);
+        user.setActivationCode(UUID.randomUUID().toString());
         user = userRepository.save(user);
+
+        if (!StringUtils.isEmpty(user.getEmail())){
+
+            String message = String.format(
+                    "Hello, %s! \n" +
+                            "Welcome to RentCars. Please, visit next link: http://localhost:8080/activate/%s",
+                    user.getLogin(),
+                    user.getActivationCode()
+            );
+
+            mailSender.send(user.getEmail(), "Activation code", message);
+
+        }
+
         roleService.addUserForRole(1L, user.getId());
         UserRequest request = new UserRequest();
         userMapper.updateUserRequestFromUser(user, request);
@@ -137,5 +156,18 @@ public class UserService {
 
 
 
+    public boolean activateUser(String code) {
+        User user = userRepository.findByActivationCode(code);
+
+        if (user == null) {
+            return false;
+        }
+
+        user.setActivationCode(null);
+
+        userRepository.save(user);
+
+        return true;
+    }
 
 }

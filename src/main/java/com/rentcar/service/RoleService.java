@@ -1,6 +1,5 @@
 package com.rentcar.service;
 
-
 import com.rentcar.domain.Role;
 import com.rentcar.domain.User;
 import com.rentcar.exception.NoSuchEntityException;
@@ -23,8 +22,10 @@ public class RoleService {
 
 
     public Role addUserForRole (Long roleId, Long userId) {
+
         Role role = roleRepository.findById(roleId)
                 .orElseThrow(() -> new NoSuchEntityException("Role not found by id " + roleId));
+
         User userForAdding = userRepository.findById(userId)
                 .orElseThrow(() -> new NoSuchEntityException("User not found by id " + userId));
 
@@ -51,8 +52,8 @@ public class RoleService {
     }
 
 
-
     public Role createRole(String roleName) {
+
         Role role = new Role();
 
         role.setRoleName(roleName.toUpperCase(Locale.ROOT));
@@ -62,6 +63,7 @@ public class RoleService {
 
 
     public Role updateRole(Long id, String roleName) {
+
         Role role = roleRepository.findById(id)
                         .orElseThrow(() -> new NoSuchEntityException("Role not found by id " + id));
 
@@ -72,8 +74,10 @@ public class RoleService {
 
 
     public Role deleteUserForRole (Long roleId, Long userId) {
+
         Role role = roleRepository.findById(roleId)
                 .orElseThrow(() -> new NoSuchEntityException("Role not found by id " + roleId));
+
         User userForDeleting = userRepository.findById(userId)
                 .orElseThrow(() -> new NoSuchEntityException("User not found by id " + userId));
 
@@ -84,5 +88,9 @@ public class RoleService {
         return roleRepository.save(role);
     }
 
+
+    public List<Role> getRoles(Long id){
+      return roleRepository.findByUser(id);
+    }
 
 }

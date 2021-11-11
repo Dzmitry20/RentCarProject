@@ -1,10 +1,13 @@
 package com.rentcar.service;
 
-
 import com.rentcar.controller.requests.BillRequest;
-import com.rentcar.controller.requests.OrderRequest;
+import com.rentcar.controller.requests.BillUpdateRequest;
 import com.rentcar.controller.requests.mappers.BillMapper;
-import com.rentcar.domain.*;
+import com.rentcar.controller.requests.mappers.BillUpdateMapper;
+import com.rentcar.domain.Bill;
+import com.rentcar.domain.Car;
+import com.rentcar.domain.Discount;
+import com.rentcar.domain.Order;
 import com.rentcar.domain.status.BillStatus;
 import com.rentcar.domain.status.OrderStatus;
 import com.rentcar.exception.NoSuchEntityException;
@@ -20,7 +23,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.sql.SQLException;
 import java.sql.Timestamp;
-import java.time.LocalDateTime;
+import java.util.Date;
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -34,12 +38,14 @@ public class BillService {
 
     public final BillMapper billMapper;
 
+    public final BillUpdateMapper billUpdateMapper;
+
     public final DiscountRepository discountRepository;
+
 
     public int days(Timestamp d1, Timestamp d2) {
         return (int) ((d2.getTime() - d1.getTime()) / (1000 * 60 * 60 * 24));
     }
-
 
     public double totalPriceForOrder(Long id) {
 
@@ -76,14 +82,13 @@ public class BillService {
 
         Bill bill = new Bill();
 
+        Order order = orderRepository.findById(billRequest.getOrderId())
+                .orElseThrow(() -> new NoSuchEntityException("Order not found by id "));
+
         billMapper.updateBillFromBillRequest(billRequest, bill);
-        bill.setPaymentDate(LocalDateTime.now());
+        bill.setCreateDate(new Timestamp(new Date().getTime()));
         bill.setBillStatus(BillStatus.AWAITING_PAYMENT);
         bill.setTotalPrice(totalPriceForOrder(billRequest.getOrderId()));
-
-        Order order = orderRepository.findById(billRequest.getOrderId())
-                        .orElseThrow(() -> new NoSuchEntityException("Order not found by id "));
-
         bill.setOrder(order);
 
         billRepository.save(bill);
@@ -94,16 +99,34 @@ public class BillService {
         orderRepository.save(order);
 
         return billRequest;
-
-
     }
-
 
 
     @Transactional(propagation = Propagation.REQUIRED, isolation = Isolation.DEFAULT, rollbackFor = SQLException.class)
     public void deleteBill(Long id){
 
        billRepository.delete(id);
+    }
 
+
+    public List<Bill> findAllBills() {
+        List<Bill> bills = billRepository.findAll();
+     return bills;
+    }
+
+
+    public BillUpdateRequest updateBill(Long id, BillUpdateRequest billUpdateRequest) {
+
+        Bill bill = billRepository.findById(id)
+                .orElseThrow(() -> new NoSuchEntityException("Bill not found by id "));
+
+        billUpdateMapper.updateBillFromBillUpdateRequest(billUpdateRequest, bill);
+        bill.setCreateDate(new Timestamp(new Date().getTime()));
+        billRepository.save(bill);
+
+        BillUpdateRequest request = new BillUpdateRequest();
+        billUpdateMapper.updateBillUpdateRequestFromBill(bill, request);
+
+        return request;
     }
 }

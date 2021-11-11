@@ -61,6 +61,9 @@ public class User {
     @Column
     private String password;
 
+    @Column(name = "activation_code")
+    private String activationCode;
+
     @Column
     @Enumerated(EnumType.STRING)
     private Gender gender = Gender.NOT_SELECTED;

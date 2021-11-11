@@ -1,13 +1,10 @@
 package com.rentcar.controller;
 
-
 import com.rentcar.domain.Role;
-import com.rentcar.domain.User;
 import com.rentcar.service.RoleService;
 import io.swagger.annotations.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
-
 import java.util.List;
 
 @RestController
@@ -138,5 +135,19 @@ public class RoleController {
     }
 
 
+    @ApiOperation(value = "find all roles for user ")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "userId", dataType = "string", paramType = "path",
+                    value = "id of user", required = true),
+            @ApiImplicitParam(name = "X-Auth-Token", value = "token", required = true,
+                    dataType = "string", paramType = "header")
+    })
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Roles was successfully found"),
+    })
+    @GetMapping("/findRoles/{userId}")
+    public List<Role> findRolesForUser(@PathVariable("userId") Long id) {
+        return roleService.getRoles(id);
+    }
 
 }

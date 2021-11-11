@@ -1,6 +1,5 @@
 package com.rentcar.service;
 
-
 import com.rentcar.controller.requests.OrderRequest;
 import com.rentcar.controller.requests.mappers.OrderMapper;
 import com.rentcar.domain.Car;
@@ -35,8 +34,6 @@ public class OrderService {
     public final BillRepository billRepository;
 
 
-
-
     public List<Order>  findAllOrders(){
         return orderRepository.findAll();
     }
@@ -57,7 +54,6 @@ public class OrderService {
 
         return request;
     }
-
 
 
     public OrderRequest createOrder(OrderRequest orderRequest){
@@ -104,11 +100,4 @@ public class OrderService {
         orderRepository.delete(id);
 
     }
-
-
-
-
-
-
-
 }

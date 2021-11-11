@@ -25,7 +25,5 @@ public interface UserRepository extends CrudRepository<User, Long>, PagingAndSor
 
      Optional<User> findByIdAndIsDeletedFalse(Long id);
 
-
-
-
+    User findByActivationCode(String code);
 }

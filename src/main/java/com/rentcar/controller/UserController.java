@@ -1,15 +1,18 @@
 package com.rentcar.controller;
 
+import com.rentcar.controller.requests.SearchRequest;
 import com.rentcar.controller.requests.UserCreateRequest;
 import com.rentcar.controller.requests.UserRequest;
 import com.rentcar.domain.User;
+import com.rentcar.repository.CriteriaSearch;
+import com.rentcar.repository.SearchRepository;
 import com.rentcar.service.UserService;
 import io.swagger.annotations.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import javax.validation.Valid;
 import java.util.List;
 
 @RestController
@@ -18,6 +21,8 @@ import java.util.List;
 public class UserController {
 
     private final UserService userService;
+
+    private final CriteriaSearch criteriaSearch;
 
 
     @ApiOperation(value = "update one user")
@@ -48,6 +53,7 @@ public class UserController {
     public Page<User> findAll() {
         return userService.findAllUsers();
     }
+
 
 
     @ApiOperation(value = "find users with name")
@@ -85,6 +91,7 @@ public class UserController {
         return userService.findUserByNameAndSurname(name, surname);
     }
 
+
     @ApiOperation(value = "find user by login")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "login", dataType = "string", paramType = "query",
@@ -109,7 +116,7 @@ public class UserController {
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "Users were successfully found")
     })
-    @GetMapping
+    @GetMapping("/admin/all")
     public List<UserRequest> findAllExisting() {
         return userService.findAllExistingUsers();
     }
@@ -161,6 +168,32 @@ public class UserController {
     }
 
 
+    @ApiOperation(value = "search user with criteria")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "X-Auth-Token", value = "token", required = true,
+                    dataType = "string", paramType = "header")
+    })
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "User was successfully found"),
+    })
+
+    @GetMapping("/search")
+    public List<User> search(@ModelAttribute SearchRequest request) {
+        return criteriaSearch.criteriaApiSearch(request);
+    }
 
 
+    @GetMapping("/activate/{code}")
+    public ResponseEntity<String> activate(@PathVariable String code) {
+        boolean isActivated = userService.activateUser(code);
+
+        String response;
+        if (isActivated) {
+            response = "User successfully activated";
+        } else {
+            response = "Activation code is not found";
+        }
+        return new ResponseEntity<>(response, HttpStatus.OK);
+
+    }
 }
